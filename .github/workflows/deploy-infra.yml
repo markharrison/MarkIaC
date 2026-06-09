@@ -1,0 +1,66 @@
+name: Deploy infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      resourceGroup:
+        description: Resource group name
+        required: true
+        type: string
+      projectName:
+        description: Project name prefix
+        required: false
+        default: markiac
+        type: string
+      location:
+        description: Primary Azure location
+        required: false
+        default: uksouth
+        type: string
+      openAiLocation:
+        description: Azure OpenAI location
+        required: false
+        default: swedencentral
+        type: string
+      searchLocation:
+        description: Azure AI Search location
+        required: false
+        default: uksouth
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Create resource group
+        run: |
+          az group create \
+            --name "${{ inputs.resourceGroup }}" \
+            --location "${{ inputs.location }}"
+
+      - name: Deploy Bicep
+        run: |
+          az deployment group create \
+            --resource-group "${{ inputs.resourceGroup }}" \
+            --template-file "infra/main.bicep" \
+            --parameters \
+              projectName="${{ inputs.projectName }}" \
+              location="${{ inputs.location }}" \
+              openAiLocation="${{ inputs.openAiLocation }}" \
+              searchLocation="${{ inputs.searchLocation }}" \
+              sqlAdminObjectId="${{ vars.AZURE_SQL_ADMIN_OBJECT_ID }}" \
+              sqlAdminLogin="${{ vars.AZURE_SQL_ADMIN_LOGIN }}"
