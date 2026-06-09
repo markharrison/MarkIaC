@@ -1,0 +1,28 @@
+# Example Terraform Variables
+# Copy this file to terraform.tfvars and update with your values
+# Note: terraform.tfvars is gitignored for security
+
+# Resource Group Configuration
+resource_group_name = "rg-markiac-dev"
+
+# Location Configuration
+location        = "uksouth"        # Default location for most resources
+openai_location = "swedencentral"  # Location for Azure OpenAI (required for GPT-4o)
+
+# Project Configuration
+project_name = "markiac"
+environment  = "dev"
+
+# SQL Server Entra ID Admin Configuration
+# To find your Object ID, run: az ad user show --id your-email@domain.com --query id -o tsv
+sql_admin_object_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"  # Replace with your Object ID
+sql_admin_login     = "admin@yourdomain.com"                  # Replace with your admin email
+
+# Resource Tags
+tags = {
+  Project     = "MarkIaC"
+  Environment = "dev"
+  ManagedBy   = "Terraform"
+  Owner       = "Your Name"
+  CostCenter  = "Engineering"
+}
