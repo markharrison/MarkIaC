@@ -15,7 +15,7 @@ param searchLocation string = location
 @description('Azure AD object ID for SQL Entra admin.')
 param sqlAdminObjectId string
 
-@description('Azure AD login/U P N for SQL Entra admin.')
+@description('Azure AD login/UPN for SQL Entra admin.')
 param sqlAdminLogin string
 
 @description('Optional override for App Service app name.')
